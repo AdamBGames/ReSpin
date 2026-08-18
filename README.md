@@ -44,6 +44,15 @@ Gentoo (portage), Slackware, and Solus (eopkg) aren't supported — their
 package models (source-based builds, no explicit/dependency split) don't
 fit this tool's snapshot-and-reinstall approach cleanly.
 
+## AI disclosure
+
+Claude (Anthropic) was used as a development assistant in building Respin.
+I know AI-assisted code is a mixed bag for a lot of people, so I'd rather
+be upfront about it than not. My hope is that Respin is useful regardless
+— it exists to help people rebuild their webtop instances without losing
+the apps and configs they've set up, and I'd rather ship something that
+does that well than worry about how it looks.
+
 **Flatpak + Flathub are installed on every distro** as a portable fallback
 so app availability never depends on how complete that distro's native
 repos are. `respin flatpak-setup` (also a button in the GUI, and step 5 of
@@ -238,8 +247,8 @@ accordingly.
 ### Any distro (Arch, Debian/Ubuntu, Fedora/RHEL, openSUSE, Alpine, Void)
 
 ```bash
-git clone https://github.com/AdamBGames/PersonalStuff.git
-cd PersonalStuff/Portainer_Stacks/webtopcloud/Respin
+git clone https://github.com/AdamBGames/ReSpin.git
+cd ReSpin
 ./install.sh              # installs CLI + GUI (installs python3/Tk if missing)
 ./install.sh --no-gui     # CLI only, skips the GUI + its deps
 ```
