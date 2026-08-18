@@ -20,6 +20,19 @@ between package managers for that — but the tool itself is: the same
 script and GUI work unmodified on any of the six, each driving its native
 package manager.
 
+## Why ReSpin
+
+ReSpin was designed with [Webtop](https://github.com/linuxserver/docker-webtop)
+in mind. I've had to respin fresh Webtop instances more times than I'd
+like — after Docker updates, new image versions, and everything in
+between — and rebuilding everything by hand every time gets old fast.
+Webtop's built-in package install option didn't make that easier either:
+in my experience it doesn't always work, can hang, or simply breaks
+outright for apps that use Chromium or Electron, like Discord. That
+combination is exactly why I built this. That said, ReSpin isn't
+Webtop-specific — it should work fine on any of the six supported distro
+families, containerized or not.
+
 ## Supported distros
 
 | Distro family                        | Package manager | Explicit-install list | AUR/foreign equivalent |
@@ -303,6 +316,13 @@ packaging/build-release.sh 1.2.3    # or pass a version explicitly
 ```
 
 Artifacts land in `dist/` (gitignored, same as `pkg/` from `makepkg`).
+
+## Contributing
+
+This is still early, and there are more features planned. It's fully
+open source, so if you've got ideas, run into a bug, or just want to
+make it better — open an issue or a PR. All suggestions and
+contributions are welcome.
 
 ## AI disclosure
 
