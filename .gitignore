@@ -7,3 +7,7 @@ __pycache__/
 pkg/
 src/
 *.pkg.tar.*
+
+# Release artifacts from packaging/build-release.sh. The build script and
+# packaging templates remain tracked; only the built .deb/.rpm/.tar.gz go here.
+dist/

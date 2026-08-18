@@ -276,3 +276,28 @@ makepkg -si
 Same install locations as `install.sh`, but tracked by pacman — gives you
 `pacman -R respin` for a clean removal and `pacman -Qkk respin` to check
 for tampered files, at the cost of only working on Arch.
+
+### Debian/Ubuntu (.deb) and Fedora/RHEL (.rpm)
+
+Prebuilt `.deb` and `.rpm` packages are attached to each
+[GitHub release](https://github.com/AdamBGames/ReSpin/releases). Same
+install locations as `install.sh`:
+
+```bash
+sudo apt install ./respin_<version>-1_all.deb      # Debian/Ubuntu
+sudo dnf install ./respin-<version>-1.noarch.rpm    # Fedora/RHEL
+```
+
+A `.tar.gz` source release is attached too — same contents as a git
+checkout, so `tar xf respin-<version>.tar.gz && cd respin-<version> &&
+./install.sh` works the same as cloning the repo.
+
+To build these yourself instead of using a release (needs `dpkg` and
+`rpm-tools` on Arch, or the Debian/RHEL equivalents elsewhere):
+
+```bash
+packaging/build-release.sh          # defaults to pkgver from PKGBUILD
+packaging/build-release.sh 1.2.3    # or pass a version explicitly
+```
+
+Artifacts land in `dist/` (gitignored, same as `pkg/` from `makepkg`).
