@@ -3,7 +3,7 @@ Version:        %{_respin_version}
 Release:        1%{?dist}
 Summary:        Backup, rebuild, and app-fixer for the webtop container, with a GUI front-end
 License:        MIT
-URL:            https://github.com/AdamBGames/ReSpin
+URL:            https://github.com/AdamBisCoding/ReSpin
 BuildArch:      noarch
 
 Source0:        respin.sh
@@ -48,5 +48,5 @@ install -Dm644 %{SOURCE4} %{buildroot}%{_prefix}/lib/respin/respin.png
 %{_datadir}/pixmaps/respin.png
 
 %changelog
-* Tue Aug 18 2026 AdamBGames <https://github.com/AdamBGames> - %{_respin_version}-1
+* Tue Aug 18 2026 AdamBisCoding <https://github.com/AdamBisCoding> - %{_respin_version}-1
 - See README.md and git history for changes.

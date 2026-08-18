@@ -5,8 +5,8 @@ Priority: optional
 Architecture: all
 Depends: bash, python3, python3-tk
 Recommends: fzf, flatpak, git, dialog
-Maintainer: AdamBGames <https://github.com/AdamBGames>
-Homepage: https://github.com/AdamBGames/ReSpin
+Maintainer: AdamBisCoding <https://github.com/AdamBisCoding>
+Homepage: https://github.com/AdamBisCoding/ReSpin
 Description: Backup, rebuild, and app-fixer for the webtop container, with a GUI front-end
  A backup/rebuild tool that works on Arch, Debian/Ubuntu, Fedora/RHEL,
  openSUSE, Alpine, and Void. Snapshots whatever is actually explicitly

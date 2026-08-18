@@ -277,7 +277,7 @@ accordingly.
 ### Any distro (Arch, Debian/Ubuntu, Fedora/RHEL, openSUSE, Alpine, Void)
 
 ```bash
-git clone https://github.com/AdamBGames/ReSpin.git
+git clone https://github.com/AdamBisCoding/ReSpin.git
 cd ReSpin
 ./install.sh              # installs CLI + GUI (installs python3/Tk if missing)
 ./install.sh --no-gui     # CLI only, skips the GUI + its deps
@@ -310,7 +310,7 @@ for tampered files, at the cost of only working on Arch.
 ### Debian/Ubuntu (.deb) and Fedora/RHEL (.rpm)
 
 Prebuilt `.deb` and `.rpm` packages are attached to each
-[GitHub release](https://github.com/AdamBGames/ReSpin/releases). Same
+[GitHub release](https://github.com/AdamBisCoding/ReSpin/releases). Same
 install locations as `install.sh`:
 
 ```bash
