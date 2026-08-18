@@ -42,6 +42,8 @@
 #   respin list-shells             Show supported shells + installed/configured state
 #   respin auto-update-setup      Install hourly unattended system-update cron job
 #   respin fix-apps               Clear caches/locks + fix chrome-sandbox perms (Falkon/Discord/etc)
+#   respin add-search-path <dir>  Register an extra app-install dir for fix-apps to search
+#   respin list-search-paths      Show registered extra app-install dirs
 #   respin                        Interactive menu (TUI if dialog/whiptail present)
 #
 # Run as your normal user (NOT root/sudo) - it calls sudo itself where needed.
@@ -117,6 +119,8 @@ Usage:
   respin list-shells            Show supported shells + installed/configured state
   respin auto-update-setup      Install/repair the hourly unattended system-update cron job
   respin fix-apps               Clear caches/locks + fix chrome-sandbox perms (Falkon/Discord/etc)
+  respin add-search-path <dir>  Register an extra app-install dir for fix-apps to search
+  respin list-search-paths      Show registered extra app-install dirs
   respin pkg-manager            Print the detected package manager and exit
   respin list-packages          Print every available package name (used by search UIs)
   respin                        Interactive menu (TUI when dialog/whiptail is installed)
@@ -355,17 +359,64 @@ clear_broken_app_caches() {
   echo "Done - try opening the app again."
 }
 
+SANDBOX_SEARCH_PATHS_FILE="$RESPIN_HOME/sandbox-search-paths.txt"
+
+# Extra roots the user has registered (via `respin add-search-path` or the
+# GUI's "Add app install location..." button) for apps installed somewhere
+# other than the defaults below - a portable install under $HOME/Apps,
+# something dropped in /usr/local, a mounted drive, etc.
+read_sandbox_search_paths() {
+  [ -f "$SANDBOX_SEARCH_PATHS_FILE" ] || return 0
+  local line
+  while IFS= read -r line || [ -n "$line" ]; do
+    line="${line%%#*}"
+    [ -z "${line// /}" ] && continue
+    [ -d "$line" ] && echo "$line"
+  done < "$SANDBOX_SEARCH_PATHS_FILE"
+}
+
+add_search_path() {
+  local dir="$1"
+  [ -z "$dir" ] && { err_ "Usage: respin add-search-path <directory>"; exit 1; }
+  [ -d "$dir" ] || { err_ "Not a directory: $dir"; exit 1; }
+  dir="$(cd "$dir" && pwd)"
+  mkdir -p "$RESPIN_HOME"
+  touch "$SANDBOX_SEARCH_PATHS_FILE"
+  if grep -qxF "$dir" "$SANDBOX_SEARCH_PATHS_FILE" 2>/dev/null; then
+    ok_ "already registered: $dir"
+  else
+    echo "$dir" >> "$SANDBOX_SEARCH_PATHS_FILE"
+    ok_ "registered app install location: $dir"
+  fi
+}
+
+list_search_paths() {
+  read_sandbox_search_paths
+}
+
 # Self-updating Electron apps (Discord et al.) unpack a fresh chrome-sandbox
 # binary into a new app-<version>/ dir on every update, owned by the user
 # instead of root. Chromium refuses to start without it being root-owned
 # and setuid (mode 4755), and aborts with a FATAL sandbox error instead of
 # just disabling the sandbox - so this needs fixing again after every
 # Discord update, not just once.
+#
+# Not webtop-specific: searches the user's whole home directory plus /opt
+# (the two most common places self-updating or manually-dropped Linux apps
+# end up) rather than assuming one fixed path, and any extra locations
+# registered via add_search_path() get searched too.
 fix_chrome_sandbox() {
+  local roots=("$HOME" /opt) extra
+  while IFS= read -r extra; do
+    roots+=("$extra")
+  done < <(read_sandbox_search_paths)
+
   local sandbox_bins=() f owner mode fixed_any=0
   while IFS= read -r -d '' f; do
     sandbox_bins+=("$f")
-  done < <(find "$HOME/.config" -maxdepth 3 -type f -name 'chrome-sandbox' -print0 2>/dev/null)
+  done < <(find "${roots[@]}" -maxdepth 6 \
+             \( -path '*/node_modules/*' -o -path '*/.git/*' -o -path '*/.cache/*' \) -prune -o \
+             -type f -name 'chrome-sandbox' -print0 2>/dev/null)
 
   for f in "${sandbox_bins[@]}"; do
     owner=$(stat -c '%U' "$f" 2>/dev/null)
@@ -996,6 +1047,8 @@ main() {
     list-shells)    list_shells ;;
     auto-update-setup) setup_auto_update ;;
     fix-apps)       clear_broken_app_caches ;;
+    add-search-path) add_search_path "${2:-}" ;;
+    list-search-paths) list_search_paths ;;
     pkg-manager)    echo "$PKG_MANAGER" ;;
     list-packages)  require_pkg_manager; pkg_search_all ;;
     -h|--help)      usage ;;

@@ -84,9 +84,18 @@ unpacks a fresh `chrome-sandbox` binary into a new `app-<version>/` dir,
 owned by your user instead of root. Chromium refuses to start with a
 `FATAL sandbox... aborting now` error unless that binary is root-owned
 and setuid (mode `4755`) - it won't just fall back to running unsandboxed.
-`respin fix-apps` finds any `chrome-sandbox` binaries under `~/.config`
-and fixes their ownership/permissions via `sudo`, so this doesn't have to
-be done by hand after every Discord update.
+`respin fix-apps` searches your whole home directory plus `/opt` (the two
+most common places a Linux app ends up, whether that's a VM, a container,
+or bare metal) for any `chrome-sandbox` binaries and fixes their
+ownership/permissions via `sudo`, so this doesn't have to be done by hand
+after every Discord update.
+
+If an app is installed somewhere outside those defaults - a portable
+install under a custom directory, something on a second drive, etc. -
+register it with `respin add-search-path <dir>` (or the GUI's **Add app
+install location...** button, which opens a folder picker) and `fix-apps`
+will search it too from then on. `respin list-search-paths` shows what's
+currently registered.
 
 ## GUI
 
@@ -123,6 +132,10 @@ from a checkout or the installed package).
 - **Set up hourly auto-update** - runs `auto-update-setup` (see below):
   installs the hourly system-update cron job and fixes the container's cron
   daemon if it isn't actually running.
+- **Add app install location...** - opens a folder picker; the chosen
+  directory gets registered via `add-search-path` and is searched by
+  `fix-apps` from then on, for apps installed outside the defaults
+  (your home directory and `/opt`).
 - **Reinstall from backup...** - opens a dialog listing every snapshot under
   `~/.respin/backups/`, pick one and confirm.
 
@@ -142,6 +155,8 @@ respin npm-path-setup [shell...] # Add ~/.npm-global/bin to PATH (bash/zsh/fish)
 respin list-shells            # Show supported shells + installed/configured state (used by the GUI)
 respin auto-update-setup      # Install/repair the hourly unattended system-update cron job
 respin fix-apps               # Just clear the caches/locks blocking apps from opening
+respin add-search-path <dir>  # Register an extra directory for fix-apps' chrome-sandbox search
+respin list-search-paths      # Show registered extra app-install directories
 respin pkg-manager            # Print the detected package manager (pacman/apt/dnf/zypper/apk/xbps) and exit
 respin list-packages          # Print every available package name (used by the GUI search)
 respin                        # Interactive menu - full-screen TUI if dialog/whiptail is

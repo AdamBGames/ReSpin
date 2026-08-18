@@ -8,7 +8,7 @@ import subprocess
 import threading
 from pathlib import Path
 import tkinter as tk
-from tkinter import messagebox, ttk
+from tkinter import filedialog, messagebox, ttk
 from tkinter.scrolledtext import ScrolledText
 
 RESPIN_BIN = "respin"
@@ -388,12 +388,15 @@ class RespinGui(tk.Tk):
         auto_update_btn = RoundedButton(card, "Set up hourly auto-update", style="secondary", height=38, command=self.run_auto_update_setup)
         auto_update_btn.grid(row=2, column=1, sticky="ew", padx=(8, 0), pady=8)
 
-        tk.Frame(card, background=BORDER, height=1).grid(row=3, column=0, columnspan=2, sticky="ew", pady=(6, 10))
+        add_search_path_btn = RoundedButton(card, "Add app install location...", style="secondary", height=38, command=self.open_add_search_path_dialog)
+        add_search_path_btn.grid(row=3, column=0, columnspan=2, sticky="ew", pady=8)
+
+        tk.Frame(card, background=BORDER, height=1).grid(row=4, column=0, columnspan=2, sticky="ew", pady=(6, 10))
 
         reinstall_btn = RoundedButton(card, "Reinstall from backup...", style="danger", height=44, command=self.open_reinstall_dialog)
-        reinstall_btn.grid(row=4, column=0, columnspan=2, sticky="ew")
+        reinstall_btn.grid(row=5, column=0, columnspan=2, sticky="ew")
 
-        self.action_buttons = [backup_btn, fix_btn, search_btn, flatpak_btn, npm_path_btn, auto_update_btn, reinstall_btn]
+        self.action_buttons = [backup_btn, fix_btn, search_btn, flatpak_btn, npm_path_btn, auto_update_btn, add_search_path_btn, reinstall_btn]
         return outer
 
     def _build_stats(self, parent: tk.Misc) -> ttk.Frame:
@@ -497,6 +500,15 @@ class RespinGui(tk.Tk):
             "Flatpak + Flathub are installed. Log out and back in so the "
             "app-menu integration and portals register correctly.",
         )
+
+    def open_add_search_path_dialog(self) -> None:
+        directory = filedialog.askdirectory(
+            title="Select a directory where apps are installed",
+            mustexist=True,
+        )
+        if not directory:
+            return
+        self._run_command(["add-search-path", directory])
 
     def open_search_window(self) -> None:
         SearchWindow(self)
