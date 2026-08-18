@@ -66,6 +66,15 @@ caches (`~/.cache/mesa_shader_cache`) cause similar blank/crashing windows.
 `respin fix-apps` clears all of it — this part is identical on every
 distro, since it's an Electron/Chromium convention, not a packaging one.
 
+Self-updating apps like Discord are a separate problem: every update
+unpacks a fresh `chrome-sandbox` binary into a new `app-<version>/` dir,
+owned by your user instead of root. Chromium refuses to start with a
+`FATAL sandbox... aborting now` error unless that binary is root-owned
+and setuid (mode `4755`) — it won't just fall back to running unsandboxed.
+`respin fix-apps` finds any `chrome-sandbox` binaries under `~/.config`
+and fixes their ownership/permissions via `sudo`, so this doesn't have to
+be done by hand after every Discord update.
+
 ## GUI
 
 `respin-gui` (launched from the application menu as **Respin**, or run

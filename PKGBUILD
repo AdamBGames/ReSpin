@@ -1,9 +1,9 @@
 pkgname=respin
-pkgver=1.0.0
-pkgrel=7
+pkgver=1.0.1
+pkgrel=1
 pkgdesc="Backup, rebuild, and app-fixer for the webtop container, with a GUI front-end"
 arch=(any)
-url="https://github.com/adamburman/PersonalStuff"
+url="https://github.com/AdamBGames/ReSpin"
 license=(MIT)
 depends=(bash pacman sudo python tk)
 optdepends=('fzf: interactive package search from the CLI (respin search)'

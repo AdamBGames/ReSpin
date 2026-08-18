@@ -41,7 +41,7 @@
 #   respin npm-path-setup [shell...] Add ~/.npm-global/bin to PATH (bash/zsh/fish)
 #   respin list-shells             Show supported shells + installed/configured state
 #   respin auto-update-setup      Install hourly unattended system-update cron job
-#   respin fix-apps               Clear the caches/locks blocking Falkon/Discord/etc
+#   respin fix-apps               Clear caches/locks + fix chrome-sandbox perms (Falkon/Discord/etc)
 #   respin                        Interactive menu (TUI if dialog/whiptail present)
 #
 # Run as your normal user (NOT root/sudo) — it calls sudo itself where needed.
@@ -116,7 +116,7 @@ Usage:
                                    with no arguments, asks interactively
   respin list-shells            Show supported shells + installed/configured state
   respin auto-update-setup      Install/repair the hourly unattended system-update cron job
-  respin fix-apps               Clear caches/locks blocking Falkon/Discord/etc from opening
+  respin fix-apps               Clear caches/locks + fix chrome-sandbox perms (Falkon/Discord/etc)
   respin pkg-manager            Print the detected package manager and exit
   respin list-packages          Print every available package name (used by search UIs)
   respin                        Interactive menu (TUI when dialog/whiptail is installed)
@@ -350,7 +350,37 @@ clear_broken_app_caches() {
   # software-rendered containerised desktops.
   rm -rf "$HOME/.cache/mesa_shader_cache" "$HOME/.cache/mesa_shader_cache_db" 2>/dev/null
 
+  fix_chrome_sandbox
+
   echo "Done — try opening the app again."
+}
+
+# Self-updating Electron apps (Discord et al.) unpack a fresh chrome-sandbox
+# binary into a new app-<version>/ dir on every update, owned by the user
+# instead of root. Chromium refuses to start without it being root-owned
+# and setuid (mode 4755), and aborts with a FATAL sandbox error instead of
+# just disabling the sandbox — so this needs fixing again after every
+# Discord update, not just once.
+fix_chrome_sandbox() {
+  local sandbox_bins=() f owner mode fixed_any=0
+  while IFS= read -r -d '' f; do
+    sandbox_bins+=("$f")
+  done < <(find "$HOME/.config" -maxdepth 3 -type f -name 'chrome-sandbox' -print0 2>/dev/null)
+
+  for f in "${sandbox_bins[@]}"; do
+    owner=$(stat -c '%U' "$f" 2>/dev/null)
+    mode=$(stat -c '%a' "$f" 2>/dev/null)
+    [ "$owner" = "root" ] && [ "$mode" = "4755" ] && continue
+
+    if sudo chown root:root "$f" 2>/dev/null && sudo chmod 4755 "$f" 2>/dev/null; then
+      ok_ "fixed sandbox permissions: $f"
+      fixed_any=1
+    else
+      warn_ "couldn't fix sandbox permissions on $f (needs root) — run with sudo access available."
+    fi
+  done
+
+  [ "$fixed_any" -eq 1 ] && ok_ "chrome-sandbox is now root-owned + setuid (4755) where needed."
 }
 
 # ---------------------------------------------------------------------------
