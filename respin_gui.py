@@ -25,7 +25,7 @@ ICON_PATHS = [
 ]
 
 # ---------------------------------------------------------------------------
-# Design tokens — a dark, flat palette in the vein of modern dev-tool UIs
+# Design tokens - a dark, flat palette in the vein of modern dev-tool UIs
 # (GitHub Desktop, Linear, Vercel's dashboard): near-black surfaces at three
 # elevations, a single blue accent reserved for primary actions, red reserved
 # for destructive ones, and everything else neutral gray. One source of
@@ -57,7 +57,7 @@ MONO = "Monospace"
 
 
 def spaced(text: str) -> str:
-    """'ACTIONS' -> 'A C T I O N S' — a cheap letter-tracking effect for
+    """'ACTIONS' -> 'A C T I O N S' - a cheap letter-tracking effect for
     small section headers, since Tk has no real letter-spacing property."""
     return " ".join(text)
 
@@ -94,7 +94,7 @@ def detect_pkg_manager() -> str:
 
 
 def style_toplevel(win: tk.Toplevel) -> None:
-    """Shared dark chrome for dialog windows — everything below the title
+    """Shared dark chrome for dialog windows - everything below the title
     bar is real widgets, so this just sets the base window background."""
     win.configure(background=SURFACE)
 
@@ -120,7 +120,7 @@ def bordered_card(parent: tk.Misc, padding: int = 16, background: str = SURFACE)
     """A plain-Tk frame with a thin 1px outline, padded inside. ttk's
     'clam' theme won't reliably draw a border color on TFrame, but
     highlightthickness/highlightbackground are base-Tk and work regardless
-    of theme — used to give the action/output cards a visible edge instead
+    of theme - used to give the action/output cards a visible edge instead
     of relying only on a background-shade difference. Returns
     (outer_frame_to_grid, inner_frame_to_populate)."""
     outer = tk.Frame(parent, background=background, highlightthickness=1,
@@ -142,7 +142,7 @@ def _rounded_rect_points(x1: float, y1: float, x2: float, y2: float, radius: flo
 # ttk has no real rounded-corner support, so flat, square-edged buttons are
 # the single biggest thing that makes a Tkinter app read as dated next to
 # Linear/GitHub Desktop/Vercel-style UIs. RoundedButton draws its own
-# rounded rect on a Canvas (smooth=True polygon) instead — no new
+# rounded rect on a Canvas (smooth=True polygon) instead - no new
 # dependency, since this still has to install cleanly via plain
 # `python3-tk` on six different distros.
 _BUTTON_STYLES = {
@@ -223,7 +223,7 @@ class RoundedButton(tk.Canvas):
 
 
 class RoundedBadge(tk.Canvas):
-    """A small canvas-drawn pill — used for the package-manager badge and
+    """A small canvas-drawn pill - used for the package-manager badge and
     the summary chips, so they read as pills instead of Tkinter's
     characteristically square Label boxes. With stretch=True it fills
     whatever width the grid gives it (used for the full-width stat chips);
@@ -362,9 +362,9 @@ class RespinGui(tk.Tk):
         RoundedBadge(title_row, text=badge_text, bg=BG, fill=SURFACE_ALT, fg=ACCENT,
                      font=(FONT, 9, "bold"), padx=10, pady=5).pack(side="left", padx=(12, 0), pady=(6, 0))
 
-        subtitle = "Backup, rebuild, and fix apps that won't open — across Arch, Debian, Fedora, openSUSE, Alpine, and Void."
+        subtitle = "Backup, rebuild, and fix apps that won't open - across Arch, Debian, Fedora, openSUSE, Alpine, and Void."
         if self.pkg_manager == "unknown":
-            subtitle = "No supported package manager found (pacman/apt/dnf/zypper/apk/xbps) — most actions will fail."
+            subtitle = "No supported package manager found (pacman/apt/dnf/zypper/apk/xbps) - most actions will fail."
         ttk.Label(header, text=subtitle, style="Subtitle.TLabel").grid(row=1, column=1, sticky="ew", pady=(4, 0))
         return header
 
@@ -512,7 +512,7 @@ class RespinGui(tk.Tk):
         if not backups:
             messagebox.showinfo(
                 "No backups yet",
-                "Run 'Backup now' first — reinstall replays a snapshot, it doesn't work from nothing.",
+                "Run 'Backup now' first - reinstall replays a snapshot, it doesn't work from nothing.",
             )
             return
         ReinstallDialog(self, backups)
@@ -565,7 +565,7 @@ class ReinstallDialog(tk.Toplevel):
         ttk.Label(
             self,
             text="This runs a full system update and reinstalls the snapshotted package set, "
-                 "restores configs, and clears app caches. It can take a while — keep this window open.",
+                 "restores configs, and clears app caches. It can take a while - keep this window open.",
             style="Muted.TLabel",
             background=SURFACE,
             wraplength=380,
@@ -613,7 +613,7 @@ class NpmPathDialog(tk.Toplevel):
         ttk.Label(
             self,
             text="Detected-but-unconfigured shells are pre-checked. This adds the PATH export "
-                 "line to each shell's rc file — open a new terminal (or run 'exec $SHELL') "
+                 "line to each shell's rc file - open a new terminal (or run 'exec $SHELL') "
                  "afterwards to pick up the change.",
             style="Muted.TLabel",
             background=SURFACE,
@@ -668,7 +668,7 @@ class NpmPathDialog(tk.Toplevel):
 
 
 class SearchWindow(tk.Toplevel):
-    """Two-pane package picker (pacman/apt/dnf/zypper/apk/xbps) — replaces the old fzf terminal search."""
+    """Two-pane package picker (pacman/apt/dnf/zypper/apk/xbps) - replaces the old fzf terminal search."""
 
     def __init__(self, app: RespinGui) -> None:
         super().__init__(app)
@@ -767,7 +767,7 @@ class SearchWindow(tk.Toplevel):
 
     def _install_queued(self) -> None:
         if self.app.job_running:
-            messagebox.showinfo("Busy", "Another ReSpin job is already running — wait for it to finish.")
+            messagebox.showinfo("Busy", "Another ReSpin job is already running - wait for it to finish.")
             return
         queued = read_extras()
         if not queued:

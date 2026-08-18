@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
-# build-release.sh — builds .tar.gz, .deb, and .rpm release artifacts for
+# build-release.sh - builds .tar.gz, .deb, and .rpm release artifacts for
 # ReSpin into dist/. The Arch package still comes from the PKGBUILD
-# (`makepkg -si`) at the repo root — this script covers everyone else.
+# (`makepkg -si`) at the repo root - this script covers everyone else.
 #
 # Requires dpkg-deb (for .deb) and rpmbuild (for .rpm), on Arch:
 #   sudo pacman -S dpkg rpm-tools
@@ -25,11 +25,11 @@ mkdir -p "$DIST_DIR"
 
 SRC_FILES=(respin.sh respin_gui.py respin-gui respin.desktop respin.png)
 for f in "${SRC_FILES[@]}"; do
-  [ -f "$ROOT_DIR/$f" ] || { echo "Missing $f — run from the ReSpin repo root." >&2; exit 1; }
+  [ -f "$ROOT_DIR/$f" ] || { echo "Missing $f - run from the ReSpin repo root." >&2; exit 1; }
 done
 
 # ---------------------------------------------------------------------------
-# .tar.gz — source release: same files install.sh expects, so
+# .tar.gz - source release: same files install.sh expects, so
 # `tar xf respin-$VERSION.tar.gz && cd respin-$VERSION && ./install.sh` works
 # on any of the six supported distros.
 # ---------------------------------------------------------------------------
@@ -59,7 +59,7 @@ if command -v dpkg-deb >/dev/null 2>&1; then
   dpkg-deb --root-owner-group --build "$DEB_STAGE" "$DIST_DIR/respin_${VERSION}-1_all.deb"
   rm -rf "$DEB_STAGE"
 else
-  echo "==> Skipping .deb (dpkg-deb not found — install 'dpkg')" >&2
+  echo "==> Skipping .deb (dpkg-deb not found - install 'dpkg')" >&2
 fi
 
 # ---------------------------------------------------------------------------
@@ -76,7 +76,7 @@ if command -v rpmbuild >/dev/null 2>&1; then
   find "$RPM_TOPDIR/RPMS" -name '*.rpm' -exec mv {} "$DIST_DIR/" \;
   rm -rf "$RPM_TOPDIR"
 else
-  echo "==> Skipping .rpm (rpmbuild not found — install 'rpm-tools')" >&2
+  echo "==> Skipping .rpm (rpmbuild not found - install 'rpm-tools')" >&2
 fi
 
 echo ""

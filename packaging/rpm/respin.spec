@@ -23,10 +23,10 @@ was, and does a one-shot fix for Chromium/Electron/QtWebEngine apps
 (Falkon, Discord, VS Code, etc.) that silently refuse to open.
 
 %prep
-# Sources are plain files, not a tarball — nothing to unpack.
+# Sources are plain files, not a tarball - nothing to unpack.
 
 %build
-# Nothing to build — respin is shell + Python, installed as-is.
+# Nothing to build - respin is shell + Python, installed as-is.
 
 %install
 rm -rf %{buildroot}

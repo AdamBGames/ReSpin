@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 #
-# respin.sh — ReSpin (v2)
+# respin.sh - ReSpin (v2)
 #
 # Backup + rebuild tool for Arch/Manjaro/EndeavourOS/CachyOS (pacman),
 # Debian/Ubuntu/Mint/Pop!_OS (apt), Fedora/RHEL/Rocky/Alma/Nobara (dnf),
-# openSUSE (zypper), Alpine (apk), and Void (xbps) — plus a one-shot fix for
+# openSUSE (zypper), Alpine (apk), and Void (xbps) - plus a one-shot fix for
 # Chromium/Electron/QtWebEngine apps (Falkon, Discord, VS Code, ...) that
 # silently refuse to open due to stale singleton locks or corrupted caches.
 #
@@ -44,7 +44,7 @@
 #   respin fix-apps               Clear caches/locks + fix chrome-sandbox perms (Falkon/Discord/etc)
 #   respin                        Interactive menu (TUI if dialog/whiptail present)
 #
-# Run as your normal user (NOT root/sudo) — it calls sudo itself where needed.
+# Run as your normal user (NOT root/sudo) - it calls sudo itself where needed.
 
 set -uo pipefail
 
@@ -58,7 +58,7 @@ EXTRA_PACKAGES_FILE="$RESPIN_HOME/extra-packages.txt"
 
 # Hourly unattended-update script + its cron entry. Both live under $HOME
 # (the bind-mounted config volume), so the files themselves already survive
-# a full container rebuild — what doesn't survive is the cron *daemon*
+# a full container rebuild - what doesn't survive is the cron *daemon*
 # actually picking them up, which setup_auto_update/fix_crond_spool_path
 # below take care of.
 AUTO_UPDATE_SCRIPT="$HOME/scripts/auto-update.sh"
@@ -81,7 +81,7 @@ CONFIG_PATHS=(
   ".config/obs-studio" ".config/audacity"
 )
 
-# Shells supported by `npm-path-setup` — the main ones people actually use
+# Shells supported by `npm-path-setup` - the main ones people actually use
 # interactively. Extend this (plus shell_rc_file/shell_path_line below) to
 # add more.
 SUPPORTED_SHELLS=(bash zsh fish)
@@ -102,7 +102,7 @@ err_()  { printf '%s\n' "${C_ERR}  ✘ $*${C_OFF}" >&2; }
 
 usage() {
   cat <<'EOF'
-ReSpin — backup / rebuild / app-fixer
+ReSpin - backup / rebuild / app-fixer
 (Arch, Debian/Ubuntu, Fedora/RHEL, openSUSE, Alpine, Void)
 
 Usage:
@@ -121,7 +121,7 @@ Usage:
   respin list-packages          Print every available package name (used by search UIs)
   respin                        Interactive menu (TUI when dialog/whiptail is installed)
 
-Run as your normal user — sudo is invoked internally where needed.
+Run as your normal user - sudo is invoked internally where needed.
 EOF
 }
 
@@ -140,7 +140,7 @@ cleanup() { [ -n "$SUDO_KEEPALIVE_PID" ] && kill "$SUDO_KEEPALIVE_PID" 2>/dev/nu
 trap cleanup EXIT
 
 # ---------------------------------------------------------------------------
-# Package manager abstraction — everything distro-specific lives here.
+# Package manager abstraction - everything distro-specific lives here.
 # ---------------------------------------------------------------------------
 detect_pkg_manager() {
   if command -v pacman >/dev/null 2>&1; then echo "pacman"
@@ -183,7 +183,7 @@ pkg_update_system() {
   esac
 }
 
-# Batched, idempotent install of "$@" — skips anything already installed.
+# Batched, idempotent install of "$@" - skips anything already installed.
 pkg_install() {
   [ "$#" -eq 0 ] && return 0
   case "$PKG_MANAGER" in
@@ -226,7 +226,7 @@ pkg_list_explicit() {
     apt)    apt-mark showmanual ;;
     dnf)    dnf repoquery --userinstalled --qf '%{name}\n' 2>/dev/null ;;
     # zypper has no manual-vs-dependency distinction like apt/dnf, so this
-    # captures everything installed — a slightly larger snapshot than the
+    # captures everything installed - a slightly larger snapshot than the
     # other package managers produce, but harmless on reinstall.
     zypper) rpm -qa --qf '%{NAME}\n' ;;
     apk)    sed -e 's/[<>=~].*//' -e '/^\s*$/d' /etc/apk/world 2>/dev/null ;;
@@ -234,7 +234,7 @@ pkg_list_explicit() {
   esac
 }
 
-# Arch/AUR-only concept — empty elsewhere, the AUR step just no-ops.
+# Arch/AUR-only concept - empty elsewhere, the AUR step just no-ops.
 pkg_list_foreign() {
   case "$PKG_MANAGER" in
     pacman) pacman -Qqem ;;
@@ -247,7 +247,7 @@ pkg_search_all() {
     pacman) pacman -Slq ;;
     apt)    apt-cache pkgnames ;;
     dnf)    dnf -q repoquery --qf '%{name}\n' --available 2>/dev/null | sort -u ;;
-    # zypper has no plain "list all package names" command — parse the name
+    # zypper has no plain "list all package names" command - parse the name
     # column out of its pipe-delimited package table instead.
     zypper) zypper --quiet packages | awk -F'|' 'NR>2 { gsub(/^ +| +$/, "", $3); if ($3 != "") print $3 }' | sort -u ;;
     apk)    apk search -q ;;
@@ -292,29 +292,29 @@ dedupe_array() {
 ensure_aur_helper() {
   [ "$PKG_MANAGER" = "pacman" ] || return 0
   command -v yay >/dev/null 2>&1 && return 0
-  head_ "No AUR helper found — bootstrapping yay"
+  head_ "No AUR helper found - bootstrapping yay"
   local tmp; tmp=$(mktemp -d)
   if git clone --depth=1 https://aur.archlinux.org/yay-bin.git "$tmp/yay-bin" \
       && (cd "$tmp/yay-bin" && makepkg -si --noconfirm); then
     ok_ "yay installed."
   else
-    warn_ "failed to bootstrap yay — AUR/foreign packages will be skipped."
+    warn_ "failed to bootstrap yay - AUR/foreign packages will be skipped."
   fi
   rm -rf "$tmp"
 }
 
 # ---------------------------------------------------------------------------
-# Cache/lock cleanup — fixes the "app just doesn't open" problem
+# Cache/lock cleanup - fixes the "app just doesn't open" problem
 # ---------------------------------------------------------------------------
 clear_broken_app_caches() {
   head_ "Clearing Chromium/Electron/QtWebEngine caches & stale locks"
 
-  # Deleting caches out from under a RUNNING app can corrupt its profile —
+  # Deleting caches out from under a RUNNING app can corrupt its profile -
   # warn rather than silently doing it.
   local proc
   for proc in discord Discord falkon code electron; do
     if pgrep -x "$proc" >/dev/null 2>&1; then
-      warn_ "'$proc' appears to be running — close it first for a clean fix."
+      warn_ "'$proc' appears to be running - close it first for a clean fix."
     fi
   done
 
@@ -352,14 +352,14 @@ clear_broken_app_caches() {
 
   fix_chrome_sandbox
 
-  echo "Done — try opening the app again."
+  echo "Done - try opening the app again."
 }
 
 # Self-updating Electron apps (Discord et al.) unpack a fresh chrome-sandbox
 # binary into a new app-<version>/ dir on every update, owned by the user
 # instead of root. Chromium refuses to start without it being root-owned
 # and setuid (mode 4755), and aborts with a FATAL sandbox error instead of
-# just disabling the sandbox — so this needs fixing again after every
+# just disabling the sandbox - so this needs fixing again after every
 # Discord update, not just once.
 fix_chrome_sandbox() {
   local sandbox_bins=() f owner mode fixed_any=0
@@ -376,7 +376,7 @@ fix_chrome_sandbox() {
       ok_ "fixed sandbox permissions: $f"
       fixed_any=1
     else
-      warn_ "couldn't fix sandbox permissions on $f (needs root) — run with sudo access available."
+      warn_ "couldn't fix sandbox permissions on $f (needs root) - run with sudo access available."
     fi
   done
 
@@ -410,7 +410,7 @@ do_backup() {
   head_ "Backing up configs & dotfiles"
   local f p dest
   # .profile is the one every POSIX-ish shell (dash, ash, ksh, and bash/zsh
-  # as a fallback) reads as its login-shell rc — without it, Alpine's default
+  # as a fallback) reads as its login-shell rc - without it, Alpine's default
   # ash shell would silently lose its config on rebuild even though its
   # packages/configs are otherwise fully covered.
   for f in .zshrc .zprofile .p10k.zsh .zsh_history .bashrc .bash_profile .profile .gitconfig; do
@@ -445,7 +445,7 @@ list_backups() {
 }
 
 # ---------------------------------------------------------------------------
-# Flatpak + Flathub — portable fallback on every distro
+# Flatpak + Flathub - portable fallback on every distro
 # ---------------------------------------------------------------------------
 setup_flatpak() {
   head_ "Installing Flatpak + Flathub"
@@ -485,12 +485,12 @@ setup_flatpak() {
 # Hourly auto-update cron job
 # ---------------------------------------------------------------------------
 # LinuxServer webtop images supervise cron via busybox crond, which defaults
-# to reading jobs from /var/spool/cron/crontabs/ — but the `crontab` binary
+# to reading jobs from /var/spool/cron/crontabs/ - but the `crontab` binary
 # actually installed is cronie's, which writes to the flat /var/spool/cron/
 # layout instead. Whichever distro this ends up on, that mismatch means
 # busybox crond crashes at boot and no cron job ever fires until this is
 # patched. It's a root-filesystem fix, not a $HOME one, so it doesn't survive
-# a container rebuild on its own and has to be reapplied — this function does
+# a container rebuild on its own and has to be reapplied - this function does
 # that, and setup_auto_update calls it every time so a fresh container gets a
 # working cron daemon as a side effect of just reinstalling the update job.
 fix_crond_spool_path() {
@@ -523,8 +523,8 @@ setup_auto_update() {
   mkdir -p "$(dirname "$AUTO_UPDATE_SCRIPT")" "$(dirname "$AUTO_UPDATE_LOG")" "$(dirname "$AUTO_UPDATE_CRONTAB")"
   cat > "$AUTO_UPDATE_SCRIPT" <<SCRIPT
 #!/usr/bin/env bash
-# auto-update.sh — full system update, run hourly via cron.
-# Regenerated by 'respin reinstall' / 'respin auto-update-setup' — edits here
+# auto-update.sh - full system update, run hourly via cron.
+# Regenerated by 'respin reinstall' / 'respin auto-update-setup' - edits here
 # get overwritten on the next respin, change the update command in
 # setup_auto_update() in respin.sh instead.
 LOG_FILE="$AUTO_UPDATE_LOG"
@@ -544,7 +544,7 @@ SCRIPT
 }
 
 # ---------------------------------------------------------------------------
-# npm-global PATH — so `npm install -g` packages are runnable without sudo
+# npm-global PATH - so `npm install -g` packages are runnable without sudo
 # ---------------------------------------------------------------------------
 shell_is_supported() {
   local s
@@ -648,7 +648,7 @@ do_npm_path_setup() {
         *)   chosen=("${installed[@]}") ;;
       esac
     else
-      err_ "not a terminal and no shells given — pass them explicitly: respin npm-path-setup <shell...>"
+      err_ "not a terminal and no shells given - pass them explicitly: respin npm-path-setup <shell...>"
       return 1
     fi
   fi
@@ -665,13 +665,13 @@ do_npm_path_setup() {
 # zsh / Oh My Zsh / Powerlevel10k
 # ---------------------------------------------------------------------------
 safe_chsh() {
-  command -v chsh >/dev/null 2>&1 || { warn_ "chsh not available — set your shell manually to: $1"; return 0; }
-  sudo chsh -s "$1" "$USER" 2>/dev/null || warn_ "chsh failed — set your shell manually to: $1"
+  command -v chsh >/dev/null 2>&1 || { warn_ "chsh not available - set your shell manually to: $1"; return 0; }
+  sudo chsh -s "$1" "$USER" 2>/dev/null || warn_ "chsh failed - set your shell manually to: $1"
 }
 
 setup_zsh() {
   local backup_dir="$1"
-  command -v zsh >/dev/null 2>&1 || { warn_ "zsh not installed — skipping Oh My Zsh/p10k."; return 0; }
+  command -v zsh >/dev/null 2>&1 || { warn_ "zsh not installed - skipping Oh My Zsh/p10k."; return 0; }
 
   head_ "Installing Oh My Zsh + Powerlevel10k"
   rm -rf "$HOME/.oh-my-zsh" "$HOME"/.oh-my-zsh-backup* 2>/dev/null
@@ -689,7 +689,7 @@ setup_zsh() {
     cp -a "$backup_dir/config/.p10k.zsh" "$HOME/.p10k.zsh"
     ok_ "restored previous .p10k.zsh from backup."
   else
-    warn_ "no previous .p10k.zsh in backup — run 'p10k configure' after first login."
+    warn_ "no previous .p10k.zsh in backup - run 'p10k configure' after first login."
   fi
 
   safe_chsh "$(command -v zsh)"
@@ -734,10 +734,10 @@ do_reinstall() {
   tmp=(); for pkg in "${to_install[@]:-}"; do [ -n "$pkg" ] && tmp+=("$pkg"); done
   to_install=("${tmp[@]:-}")
   if [ "${#to_install[@]}" -gt 0 ] && [ -n "${to_install[0]}" ]; then
-    # One batched transaction resolves shared deps together — far faster
+    # One batched transaction resolves shared deps together - far faster
     # than package-by-package.
     if ! pkg_install "${to_install[@]}"; then
-      warn_ "batch install hit a snag — retrying individually to isolate failures..."
+      warn_ "batch install hit a snag - retrying individually to isolate failures..."
       for pkg in "${to_install[@]}"; do
         pkg_is_installed "$pkg" && continue
         pkg_install "$pkg" || failed_packages+=("$pkg")
@@ -788,12 +788,12 @@ do_reinstall() {
 }
 
 # ---------------------------------------------------------------------------
-# Search — browse all available packages and queue extras
+# Search - browse all available packages and queue extras
 # ---------------------------------------------------------------------------
 do_search() {
   require_pkg_manager
   if ! command -v fzf >/dev/null 2>&1; then
-    echo "fzf not found — installing it (needed for interactive search)..."
+    echo "fzf not found - installing it (needed for interactive search)..."
     ensure_sudo
     pkg_install fzf || { err_ "couldn't install fzf."; return 1; }
   fi
@@ -833,7 +833,7 @@ do_install_extras() {
   local -a failed=()
   local pkg
   if ! pkg_install "${extra_packages[@]}"; then
-    warn_ "batch install hit a snag — retrying individually to isolate failures..."
+    warn_ "batch install hit a snag - retrying individually to isolate failures..."
     for pkg in "${extra_packages[@]}"; do
       pkg_is_installed "$pkg" && continue
       pkg_install "$pkg" || failed+=("$pkg")
@@ -842,7 +842,7 @@ do_install_extras() {
 
   if [ "${#failed[@]}" -eq 0 ]; then
     : > "$EXTRA_PACKAGES_FILE"
-    ok_ "Installed. Queue cleared — these are now normal installed packages, so the next"
+    ok_ "Installed. Queue cleared - these are now normal installed packages, so the next"
     echo "  'respin backup' captures them automatically without needing the extras queue."
   else
     printf '%s\n' "${failed[@]}" > "$EXTRA_PACKAGES_FILE"
@@ -903,7 +903,7 @@ show_tui_menu() {
     extras_count=0
     [ -s "$EXTRA_PACKAGES_FILE" ] && extras_count=$(grep -cve '^[[:space:]]*$' "$EXTRA_PACKAGES_FILE" 2>/dev/null || :)
     local choice
-    choice=$("$DIALOG_BIN" --title "ReSpin — $USER ($PKG_MANAGER)" \
+    choice=$("$DIALOG_BIN" --title "ReSpin - $USER ($PKG_MANAGER)" \
       --menu "What do you want to do?" 21 72 10 \
       1 "Backup current install" \
       2 "Reinstall / rebuild from a backup" \
@@ -941,7 +941,7 @@ show_text_menu() {
   while true; do
     echo ""
     echo "${C_HEAD}===================================${C_OFF}"
-    echo "${C_HEAD}  ReSpin — $USER ($PKG_MANAGER)${C_OFF}"
+    echo "${C_HEAD}  ReSpin - $USER ($PKG_MANAGER)${C_OFF}"
     echo "${C_HEAD}===================================${C_OFF}"
     echo "  1) Backup current install"
     echo "  2) Reinstall / rebuild from latest backup"
@@ -975,7 +975,7 @@ show_menu() {
   if [ -n "$DIALOG_BIN" ]; then
     show_tui_menu
   else
-    echo "${C_DIM}(tip: install 'dialog' for the full-screen menu — falling back to text)${C_OFF}"
+    echo "${C_DIM}(tip: install 'dialog' for the full-screen menu - falling back to text)${C_OFF}"
     show_text_menu
   fi
 }

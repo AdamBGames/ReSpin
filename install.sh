@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 #
-# install.sh — universal installer for ReSpin.
+# install.sh - universal installer for ReSpin.
 #
 # Arch users can use the PKGBUILD instead (`makepkg -si`) for a real pacman
 # package with dependency tracking and clean removal via `pacman -R`. This
-# script is for everyone else — Debian/Ubuntu, Fedora/RHEL, openSUSE, Alpine,
-# Void — and works on Arch too, just without pacman managing the files.
+# script is for everyone else - Debian/Ubuntu, Fedora/RHEL, openSUSE, Alpine,
+# Void - and works on Arch too, just without pacman managing the files.
 #
 # Usage:
 #   ./install.sh              Install CLI + GUI
 #   ./install.sh --no-gui     Install the CLI only (skips python3/Tk deps)
-#   sudo ./install.sh         Also fine — it re-execs itself with sudo either way
+#   sudo ./install.sh         Also fine - it re-execs itself with sudo either way
 #
 # Installs to the same paths the PKGBUILD uses, so behavior is identical
 # regardless of which install method was used:
@@ -52,7 +52,7 @@ echo "Detected package manager: $PKG_MANAGER"
 
 for f in respin.sh respin_gui.py respin-gui respin.desktop respin.png; do
   if [ ! -f "$SCRIPT_DIR/$f" ]; then
-    echo "Missing '$f' next to install.sh — run this from inside the ReSpin checkout." >&2
+    echo "Missing '$f' next to install.sh - run this from inside the ReSpin checkout." >&2
     exit 1
   fi
 done
