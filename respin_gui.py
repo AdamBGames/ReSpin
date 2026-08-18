@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""A native GUI front-end for the Respin backup/rebuild/app-fixer script."""
+"""A native GUI front-end for the ReSpin backup/rebuild/app-fixer script."""
 
 from __future__ import annotations
 
@@ -277,7 +277,7 @@ class RoundedBadge(tk.Canvas):
 class RespinGui(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
-        self.title("Respin")
+        self.title("ReSpin")
         self.minsize(920, 700)
         self.configure(background=BG)
         self._icon = load_icon(self)
@@ -356,7 +356,7 @@ class RespinGui(tk.Tk):
 
         title_row = ttk.Frame(header, style="App.TFrame")
         title_row.grid(row=0, column=1, sticky="ew")
-        ttk.Label(title_row, text="Respin", style="Title.TLabel").pack(side="left")
+        ttk.Label(title_row, text="ReSpin", style="Title.TLabel").pack(side="left")
 
         badge_text = self.pkg_manager.upper() if self.pkg_manager != "unknown" else "NO PACKAGE MANAGER"
         RoundedBadge(title_row, text=badge_text, bg=BG, fill=SURFACE_ALT, fg=ACCENT,
@@ -767,7 +767,7 @@ class SearchWindow(tk.Toplevel):
 
     def _install_queued(self) -> None:
         if self.app.job_running:
-            messagebox.showinfo("Busy", "Another Respin job is already running — wait for it to finish.")
+            messagebox.showinfo("Busy", "Another ReSpin job is already running — wait for it to finish.")
             return
         queued = read_extras()
         if not queued:

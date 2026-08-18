@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # build-release.sh — builds .tar.gz, .deb, and .rpm release artifacts for
-# Respin into dist/. The Arch package still comes from the PKGBUILD
+# ReSpin into dist/. The Arch package still comes from the PKGBUILD
 # (`makepkg -si`) at the repo root — this script covers everyone else.
 #
 # Requires dpkg-deb (for .deb) and rpmbuild (for .rpm), on Arch:
@@ -19,13 +19,13 @@ cd "$ROOT_DIR"
 VERSION="${1:-$(awk -F= '/^pkgver=/{print $2}' PKGBUILD)}"
 DIST_DIR="$ROOT_DIR/dist"
 
-echo "Building Respin $VERSION release artifacts into dist/"
+echo "Building ReSpin $VERSION release artifacts into dist/"
 rm -rf "$DIST_DIR"
 mkdir -p "$DIST_DIR"
 
 SRC_FILES=(respin.sh respin_gui.py respin-gui respin.desktop respin.png)
 for f in "${SRC_FILES[@]}"; do
-  [ -f "$ROOT_DIR/$f" ] || { echo "Missing $f — run from the Respin repo root." >&2; exit 1; }
+  [ -f "$ROOT_DIR/$f" ] || { echo "Missing $f — run from the ReSpin repo root." >&2; exit 1; }
 done
 
 # ---------------------------------------------------------------------------

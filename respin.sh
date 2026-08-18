@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# respin.sh — Respin (v2)
+# respin.sh — ReSpin (v2)
 #
 # Backup + rebuild tool for Arch/Manjaro/EndeavourOS/CachyOS (pacman),
 # Debian/Ubuntu/Mint/Pop!_OS (apt), Fedora/RHEL/Rocky/Alma/Nobara (dnf),
@@ -102,7 +102,7 @@ err_()  { printf '%s\n' "${C_ERR}  ✘ $*${C_OFF}" >&2; }
 
 usage() {
   cat <<'EOF'
-Respin — backup / rebuild / app-fixer
+ReSpin — backup / rebuild / app-fixer
 (Arch, Debian/Ubuntu, Fedora/RHEL, openSUSE, Alpine, Void)
 
 Usage:
@@ -130,7 +130,7 @@ EOF
 # ---------------------------------------------------------------------------
 SUDO_KEEPALIVE_PID=""
 ensure_sudo() {
-  [ "$(id -u)" -eq 0 ] && { err_ "Run Respin as your normal user, not root."; exit 1; }
+  [ "$(id -u)" -eq 0 ] && { err_ "Run ReSpin as your normal user, not root."; exit 1; }
   [ -n "$SUDO_KEEPALIVE_PID" ] && return 0
   sudo -v || { err_ "sudo authentication failed."; exit 1; }
   ( while true; do sudo -n true 2>/dev/null; sleep 50; done ) &
@@ -157,7 +157,7 @@ PKG_MANAGER="$(detect_pkg_manager)"
 require_pkg_manager() {
   if [ "$PKG_MANAGER" = "unknown" ]; then
     err_ "no supported package manager found (looked for pacman, apt-get, dnf, zypper, apk, xbps-install)."
-    err_ "Respin currently supports Arch/Manjaro/EndeavourOS/CachyOS, Debian/Ubuntu/Mint/Pop!_OS,"
+    err_ "ReSpin currently supports Arch/Manjaro/EndeavourOS/CachyOS, Debian/Ubuntu/Mint/Pop!_OS,"
     err_ "Fedora/RHEL/Rocky/Alma/Nobara, openSUSE, Alpine, and Void."
     exit 1
   fi
@@ -903,7 +903,7 @@ show_tui_menu() {
     extras_count=0
     [ -s "$EXTRA_PACKAGES_FILE" ] && extras_count=$(grep -cve '^[[:space:]]*$' "$EXTRA_PACKAGES_FILE" 2>/dev/null || :)
     local choice
-    choice=$("$DIALOG_BIN" --title "Respin — $USER ($PKG_MANAGER)" \
+    choice=$("$DIALOG_BIN" --title "ReSpin — $USER ($PKG_MANAGER)" \
       --menu "What do you want to do?" 21 72 10 \
       1 "Backup current install" \
       2 "Reinstall / rebuild from a backup" \
@@ -941,7 +941,7 @@ show_text_menu() {
   while true; do
     echo ""
     echo "${C_HEAD}===================================${C_OFF}"
-    echo "${C_HEAD}  Respin — $USER ($PKG_MANAGER)${C_OFF}"
+    echo "${C_HEAD}  ReSpin — $USER ($PKG_MANAGER)${C_OFF}"
     echo "${C_HEAD}===================================${C_OFF}"
     echo "  1) Backup current install"
     echo "  2) Reinstall / rebuild from latest backup"

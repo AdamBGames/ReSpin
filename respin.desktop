@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Application
-Name=Respin
+Name=ReSpin
 Comment=Backup, rebuild, and fix apps (Falkon, Discord, ...) that won't open
 Exec=respin-gui
 Icon=respin

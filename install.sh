@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# install.sh — universal installer for Respin.
+# install.sh — universal installer for ReSpin.
 #
 # Arch users can use the PKGBUILD instead (`makepkg -si`) for a real pacman
 # package with dependency tracking and clean removal via `pacman -R`. This
@@ -44,7 +44,7 @@ PKG_MANAGER="$(detect_pkg_manager)"
 
 if [ "$PKG_MANAGER" = "unknown" ]; then
   echo "No supported package manager found (looked for pacman, apt-get, dnf, zypper, apk, xbps-install)." >&2
-  echo "Respin supports Arch/Manjaro/EndeavourOS/CachyOS, Debian/Ubuntu/Mint/Pop!_OS," >&2
+  echo "ReSpin supports Arch/Manjaro/EndeavourOS/CachyOS, Debian/Ubuntu/Mint/Pop!_OS," >&2
   echo "Fedora/RHEL/Rocky/Alma/Nobara, openSUSE, Alpine, and Void." >&2
   exit 1
 fi
@@ -52,7 +52,7 @@ echo "Detected package manager: $PKG_MANAGER"
 
 for f in respin.sh respin_gui.py respin-gui respin.desktop respin.png; do
   if [ ! -f "$SCRIPT_DIR/$f" ]; then
-    echo "Missing '$f' next to install.sh — run this from inside the Respin checkout." >&2
+    echo "Missing '$f' next to install.sh — run this from inside the ReSpin checkout." >&2
     exit 1
   fi
 done
@@ -69,12 +69,12 @@ install_gui_deps() {
   esac
 }
 
-echo "Installing Respin (CLI)..."
+echo "Installing ReSpin (CLI)..."
 install -Dm755 "$SCRIPT_DIR/respin.sh" /usr/bin/respin
 
 if [ "$NO_GUI" -eq 0 ]; then
   install_gui_deps
-  echo "Installing Respin (GUI)..."
+  echo "Installing ReSpin (GUI)..."
   install -Dm755 "$SCRIPT_DIR/respin_gui.py" /usr/lib/respin/respin_gui.py
   install -Dm755 "$SCRIPT_DIR/respin-gui" /usr/bin/respin-gui
   install -Dm644 "$SCRIPT_DIR/respin.desktop" /usr/share/applications/respin.desktop
@@ -88,4 +88,4 @@ fi
 
 echo ""
 echo "Run 'respin' for the interactive menu, or 'respin --help' for the full command list."
-[ "$NO_GUI" -eq 0 ] && echo "Launch the GUI with 'respin-gui', or find 'Respin' in the application menu."
+[ "$NO_GUI" -eq 0 ] && echo "Launch the GUI with 'respin-gui', or find 'ReSpin' in the application menu."

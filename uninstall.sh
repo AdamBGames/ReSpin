@@ -33,5 +33,5 @@ done
 rmdir /usr/lib/respin 2>/dev/null || true
 
 echo ""
-echo "Respin uninstalled. Backups and the auto-update cron job (if set up) were left in place —"
+echo "ReSpin uninstalled. Backups and the auto-update cron job (if set up) were left in place —"
 echo "see ~/.respin, ~/scripts/auto-update.sh, and your crontab if you want to remove those too."

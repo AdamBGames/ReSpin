@@ -1,13 +1,13 @@
-# Respin
+# ReSpin
 
-<img src="respin.png" alt="Respin logo" width="128" height="128">
+<img src="respin.png" alt="ReSpin logo" width="128" height="128">
 
 A backup/rebuild tool that works on **Arch, Debian/Ubuntu, Fedora/RHEL,
 openSUSE, Alpine, and Void** — the package-manager families covering the
 large majority of DistroWatch's most-visited distros (Mint, MX Linux,
 EndeavourOS, Debian, Ubuntu, Fedora, Zorin, Manjaro, Pop!_OS, openSUSE,
 Arch, CachyOS, Rocky/Alma, and more all fall into one of these six).
-Respin auto-detects the right package manager and drives that one, so app
+ReSpin auto-detects the right package manager and drives that one, so app
 installs never depend on one specific distro or image. Also does a
 one-shot fix for Chromium/Electron/QtWebEngine apps — Falkon, Discord,
 VS Code, etc. — that silently refuse to open.
@@ -77,7 +77,7 @@ be done by hand after every Discord update.
 
 ## GUI
 
-`respin-gui` (launched from the application menu as **Respin**, or run
+`respin-gui` (launched from the application menu as **ReSpin**, or run
 directly) is the primary way to use this. It's a thin front-end over
 `respin.sh` — same backup/reinstall/fix-apps logic, one source of truth,
 just with buttons and a live output panel instead of a terminal. The
@@ -221,7 +221,7 @@ without any help. Packages that fail to install are left queued for retry.
 ### `auto-update-setup`
 
 Writes `~/scripts/auto-update.sh` (a tiny script that runs the correct
-update command for whatever package manager Respin detected, logging to
+update command for whatever package manager ReSpin detected, logging to
 `~/logs/auto-update.log`) and installs an hourly cron entry for it. Re-run
 is idempotent — it won't duplicate the cron line or clobber unrelated jobs
 already in the crontab.
@@ -241,7 +241,7 @@ and forgotten.
 
 ## Install
 
-Respin is meant to be handed to anyone running a Webtop container,
+ReSpin is meant to be handed to anyone running a Webtop container,
 regardless of which distro image they're on — `install.sh` auto-detects the
 package manager (pacman/apt/dnf/zypper/apk/xbps) and installs the CLI + GUI
 accordingly.
@@ -256,7 +256,7 @@ cd ReSpin
 ```
 
 Runs itself with `sudo` automatically if not already root. Installs to
-`/usr/bin/respin`, `/usr/bin/respin-gui`, and adds a *Respin* entry to the
+`/usr/bin/respin`, `/usr/bin/respin-gui`, and adds a *ReSpin* entry to the
 application menu — the exact same layout the Arch package below uses, so
 behavior is identical either way. `sudo ./uninstall.sh` removes everything
 it put down (backups and the auto-update cron job are left alone — see
@@ -306,9 +306,4 @@ Artifacts land in `dist/` (gitignored, same as `pkg/` from `makepkg`).
 
 ## AI disclosure
 
-Claude (Anthropic) was used as a development assistant in building Respin.
-I know AI-assisted code is a mixed bag for a lot of people, so I'd rather
-be upfront about it than not. My hope is that Respin is useful regardless
-— it exists to help people rebuild their webtop instances without losing
-the apps and configs they've set up, and I'd rather ship something that
-does that well than worry about how it looks.
+I used AI in the creation of ReSpin, while I know that there are many people who are against the use of AI, I can absolutely understand why you wouldn't want to support the project. But I held the opinion that I would rather ship something that I think could help people, rather than worrying about LLM usage. For reference, I did review the code before shipping. I would rather be honest about the use of LLMs rather than be called out about it later. Have a great day, AdamB
