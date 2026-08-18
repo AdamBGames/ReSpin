@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Respin
+Comment=Backup, rebuild, and fix apps (Falkon, Discord, ...) that won't open
+Exec=respin-gui
+Icon=respin
+Terminal=false
+Categories=Utility;System;
+Keywords=backup;reinstall;rebuild;pacman;apt;dnf;zypper;apk;xbps;falkon;discord;cache;lock;
+StartupNotify=true
