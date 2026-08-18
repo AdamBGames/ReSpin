@@ -44,14 +44,7 @@ Gentoo (portage), Slackware, and Solus (eopkg) aren't supported — their
 package models (source-based builds, no explicit/dependency split) don't
 fit this tool's snapshot-and-reinstall approach cleanly.
 
-## AI disclosure
-
-Claude (Anthropic) was used as a development assistant in building Respin.
-I know AI-assisted code is a mixed bag for a lot of people, so I'd rather
-be upfront about it than not. My hope is that Respin is useful regardless
-— it exists to help people rebuild their webtop instances without losing
-the apps and configs they've set up, and I'd rather ship something that
-does that well than worry about how it looks.
+## Flatpak
 
 **Flatpak + Flathub are installed on every distro** as a portable fallback
 so app availability never depends on how complete that distro's native
@@ -301,3 +294,12 @@ packaging/build-release.sh 1.2.3    # or pass a version explicitly
 ```
 
 Artifacts land in `dist/` (gitignored, same as `pkg/` from `makepkg`).
+
+## AI disclosure
+
+Claude (Anthropic) was used as a development assistant in building Respin.
+I know AI-assisted code is a mixed bag for a lot of people, so I'd rather
+be upfront about it than not. My hope is that Respin is useful regardless
+— it exists to help people rebuild their webtop instances without losing
+the apps and configs they've set up, and I'd rather ship something that
+does that well than worry about how it looks.
